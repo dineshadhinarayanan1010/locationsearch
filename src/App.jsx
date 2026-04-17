@@ -5,6 +5,7 @@ import Map from "./components/Map";
 import Search from "./components/Search";
 import Tabs from "./components/Tabs";
 import { getBranches } from './services/BranchService';
+import { LoadScript } from "@react-google-maps/api";
 
 export default function App() {
     const [branches, setBranches] = useState([]);
@@ -18,15 +19,18 @@ export default function App() {
     }
   return (
     <div>
-      <h1>BDO Branch Locator</h1>
-      <Search locationSearch={searchLocation} />
+      <h3>Choose your branch of account</h3>
+      <br/>
+      <LoadScript googleMapsApiKey="AIzaSyCoUdcR6aVirRkqbld2NS5gGF9gIMKya3k" libraries={["places"]}>
+        <Search locationSearch={searchLocation} />
 
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {activeTab === "list" && <List branches={branches} />
-      }
-      {activeTab === "map" && <Map branches={branches} center={center} />
-      }
+        {activeTab === "list" && <List branches={branches} onSelect={(branch) => console.log("selected branch: ",branch)} />
+        }
+        {activeTab === "map" && <Map branches={branches} center={center} />
+        }
+      </LoadScript>
     </div>
   )
 }
