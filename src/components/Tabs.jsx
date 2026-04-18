@@ -1,4 +1,4 @@
-export default function Tabs({activeTab, setActiveTab}) {
+export default function Tabs({ activeTab, setActiveTab }) {
   return (
     <div className="tabs-container">
       <button
@@ -16,6 +16,6 @@ export default function Tabs({activeTab, setActiveTab}) {
       </button>
       <div className={`underline ${activeTab}`} />
     </div>
-    
+
   )
 }

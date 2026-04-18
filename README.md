@@ -1,19 +1,39 @@
-# locationsearch
-Map and list view for location search
+# 📍 Branch Locator App (React + Mapbox/Google Maps + Redux)
 
-# React + Vite
+A React-based branch locator application that allows users to search for a location and view nearby BDO branches on an interactive Mapbox map with clustering, distance filtering, and cached API responses.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🔍 Location search with Google Geocoding API
+- 🗺️ Interactive Mapbox/Google map integration
+- 📍 Red marker for searched location
+- 🔵 Blue markers for branches
+- 📊 Marker clustering for performance
+- 📏 Distance calculation using Haversine formula
+- ⚡ Redux-based caching (avoids repeated API calls)
+- 🧠 Cached BDO API data (3-hour TTL)
+- 🏦 Displays branch details (address, hours, distance)
+- 📱 Responsive UI with branch info card
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🧱 Tech Stack
 
-## Expanding the ESLint configuration
+- React (Vite)
+- Redux Toolkit
+- Mapbox GL JS/ Google Maps
+- Axios
+- Google Geocoding API
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/dineshadhinarayanan1010/locationsearch.git
+cd branch-locator
+npm install
+node server.js
+npm run dev

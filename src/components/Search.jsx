@@ -2,31 +2,31 @@ import { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
-export default function Search({locationSearch}) {
-    const [location, setLocation] = useState("");
-    const [dispLoc, setDispLoc] = useState("");
-    const searchLocation = (e) => {
-        e.preventDefault();
-        locationSearch(location);
-    }
-    const inputRef = useRef(null);
+export default function Search({ locationSearch, loading }) {
+  const [location, setLocation] = useState("");
+  const [dispLoc, setDispLoc] = useState("");
+  const searchLocation = (e) => {
+    e.preventDefault();
+    locationSearch(location);
+  }
+  const inputRef = useRef(null);
 
-    useEffect(() => {
-      const autocomplete = new window.google.maps.places.Autocomplete (
-        inputRef.current,
-        {
-          types: ["geocode"],
-          componentRestrictions: { country: "ph" },
-        }
-      );
+  useEffect(() => {
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      inputRef.current,
+      {
+        types: ["geocode"],
+        componentRestrictions: { country: "ph" },
+      }
+    );
 
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        if (!place.geometry) return;
-        setLocation(place.name);
-        setDispLoc(place.formatted_address);
-      });
-    }, [locationSearch]);
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) return;
+      setLocation(place.name);
+      setDispLoc(place.formatted_address);
+    });
+  }, [locationSearch]);
 
   return (
     <form className="search-box" onSubmit={searchLocation}>
@@ -51,7 +51,7 @@ export default function Search({locationSearch}) {
           />
         )}
       </div>
-      <button className="search-button" type="submit">Search</button>
-  </form>
+      <button className="search-button" type="submit" disabled={loading}>{loading ? <span className="spinner"></span> : "Search"}</button>
+    </form>
   )
 }
