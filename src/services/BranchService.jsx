@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const BDO_URL = "https://www.applynow.bdo.com.ph/_api/infy_branchs";
-
 function getDistanceBetween(lat1, lng1, lat2, lng2) {
   const toRad = (v) => (v * Math.PI) / 180; //convert degree to radian
   const R = 6371; //radius of earth
@@ -21,10 +19,10 @@ function getDistanceBetween(lat1, lng1, lat2, lng2) {
 }
 
 export async function getBranches(location) {
-    const geoRes = await axios.get("https://maps.googleapis.com/maps/api/geocode/json", {
+    const geoRes = await axios.get(import.meta.env.VITE_MAP_GOOGLE_API_URL, {
         params: {
             address: location,
-            key: "AIzaSyCoUdcR6aVirRkqbld2NS5gGF9gIMKya3k",
+            key: import.meta.env.VITE_MAP_API_KEY,
         },
     })
     const center = geoRes.data.results[0].geometry.location;
@@ -36,7 +34,7 @@ export async function getBranches(location) {
     //     }
     // })
 
-    const response = await axios.get("http://localhost:5010/bdo-branches");
+    const response = await axios.get(import.meta.env.VITE_BDO_LOCAL_API_URL);
     const bdoApiRes = response.data.value;
 
     const branches = bdoApiRes.filter((branch) => branch.infy_latitude && branch.infy_longitude)
@@ -51,7 +49,11 @@ export async function getBranches(location) {
         center.lng,
         parseFloat(branch.infy_latitude),
         parseFloat(branch.infy_longitude)
-      ).toFixed(2),
+      ),
+      bankingHours: branch.infy_bankinghours ? branch.infy_bankinghours : {
+        days: "Monday - Friday",
+        hours: "08:30AM - 05:30PM",
+      } 
     }))
     .filter((b) => b.distance < 1)
     .sort((a, b) => a.distance - b.distance);

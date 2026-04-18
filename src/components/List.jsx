@@ -1,12 +1,6 @@
 import { useState } from 'react'
 
-export default function List({branches, onSelect}) {
-    const [selected, setSelected] = useState(null);
-
-    const handleChange = (branch) => {
-        setSelected(branch.id);
-        onSelect(branch);
-    };
+export default function List({branches, selectedId, onSelect}) {
   return (
     <div className="branch-list">
         <div className="branch-count">
@@ -18,15 +12,18 @@ export default function List({branches, onSelect}) {
                 <input
                     type="radio"
                     name="branch"
-                    checked={selected === branch.id}
-                    onChange={() => handleChange(branch)}
+                    checked={selectedId === branch.id}
+                    onChange={() => onSelect(branch)}
                 />
                 <div className="branch-name">{branch.name}</div>
             </div>
             <div className="branch-details">
-                <div className="branch-distance">{branch.distance} KM away from your selected address</div>
+                <div className="branch-distance">{branch.distance.toFixed(2)} KM away from your selected address</div>
                 <div className="branch-address">
                     <b>Address: </b>{branch.address}
+                    <br/>
+                    <b>Banking Hours: </b><strong>{branch.bankingHours.days}</strong><br />
+                        <span>{branch.bankingHours.hours}</span>
                 </div>
             </div>
 

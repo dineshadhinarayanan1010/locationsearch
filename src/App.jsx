@@ -7,28 +7,37 @@ import Tabs from "./components/Tabs";
 import { getBranches } from './services/BranchService';
 import { LoadScript } from "@react-google-maps/api";
 
+const GOOGLE_MAPS_CONFIG = {
+  apiKey: import.meta.env.VITE_MAP_API_KEY,
+  libraries: ["places"],
+};
+
 export default function App() {
     const [branches, setBranches] = useState([]);
     const [activeTab, setActiveTab] = useState("list");
     const [center, setCenter] = useState(null);
-
+    const [selectedBranchId, setSelectedBranchId] = useState(null);
     const searchLocation= async (location) => {
         const data = await getBranches(location);
         setBranches(data.branches);
         setCenter(data.center);
     }
+
+    const handleSelectBranch = (branch) => {
+      setSelectedBranchId(branch.id);
+      console.log("selected branch:", branch);
+    };
   return (
-    <div>
+    <div className='app-container'>
       <h3>Choose your branch of account</h3>
-      <br/>
-      <LoadScript googleMapsApiKey="AIzaSyCoUdcR6aVirRkqbld2NS5gGF9gIMKya3k" libraries={["places"]}>
+      <LoadScript googleMapsApiKey={GOOGLE_MAPS_CONFIG.apiKey} libraries={GOOGLE_MAPS_CONFIG.libraries}>
         <Search locationSearch={searchLocation} />
-
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        {activeTab === "list" && <List branches={branches} onSelect={(branch) => console.log("selected branch: ",branch)} />
+        {
+          activeTab === "list" && <List branches={branches} selectedId={selectedBranchId} onSelect={handleSelectBranch} />
         }
-        {activeTab === "map" && <Map branches={branches} center={center} />
+        {
+          activeTab === "map" && <Map branches={branches} center={center} selectedId={selectedBranchId} onSelect={handleSelectBranch}/>
         }
       </LoadScript>
     </div>

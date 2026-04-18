@@ -5,19 +5,15 @@ import {
 } from "@react-google-maps/api";
 import { useState, useEffect } from 'react'
 
-export default function Map({branches, center}) {
-    const [selected, setSelected] = useState(null);
-    const branchIcon = {
-        url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-    };
+export default function Map({branches, center, selectedId, onSelect}) {
+
+    const selectedBranch = branches.find((b) => b.id === selectedId);
 
     useEffect(() => {
-        if (selected) {
-            document
-            .querySelector(".branch-card")
-            ?.scrollIntoView({ behavior: "smooth" });
-        }
-    }, [selected]);
+        if (!selectedId) 
+            return;
+        document.getElementById(`branch-${selectedId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, [selectedId]);
 
   return (
     <div className="map-page">
@@ -28,29 +24,53 @@ export default function Map({branches, center}) {
             <GoogleMap mapContainerStyle={{height:"500px", width: "100%"}} center={center?.lat && center?.lng ? center : { lat: 14.5995, lng: 120.9842 }} zoom={15}>
                     {center && (
                         <Marker
+                            icon={"/red-marker-icon.png"}
                             position={center}
-                            label="You"
-                            icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+
                         />
                     )}
 
-                    {branches?.map((branch, index) => (
+                    {branches?.map((branch) => (
                         <Marker
-                            key={index}
-                            icon={branchIcon}
+                            key={branch.id}
+                            icon={{
+                                url: "/blue-marker-icon.png",
+                                scaledSize: new window.google.maps.Size(
+                                    selectedId === branch.id ? 60 : 30,
+                                    selectedId === branch.id ? 60 : 30
+                                ),
+                            }}
+                            // icon={{
+                            //     path: window.google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+                            //     scale: selectedId === branch.id ? 8 : 3,
+                            //     fillColor: "#fff",
+                            //     fillOpacity: 1,
+                            //     strokeWeight: 5,
+                            //     strokeColor: "#4285f4",
+                            // }}
                             position={{ lat: Number(branch.lat), lng: Number(branch.lng) }}
-                            onClick={() => setSelected(branch)}
+                            onClick={() => onSelect(branch)}
                         />
                     ))}
             </GoogleMap>
         </div>
         <div className="map-card-wrapper">
-            {selected && (
+            {selectedBranch && (
                 <div className="map-card">
-                    <div className="branch-name">{selected.name}</div>
-                    <div className="branch-distance">{selected.distance} KM away from your selected address</div>
+                    <div className="branch-name">{selectedBranch.name}</div>
+                    <div className="branch-distance">{selectedBranch.distance.toFixed(2)} KM away from your selected address</div>
                     <div className="branch-address">
-                        <b>Address: </b>{selected.address}
+                        <b>Address: </b>{selectedBranch.address}
+                        <br/>
+                        {typeof selectedBranch.bankingHours === "object" ? (
+                            <>
+                            <strong>{selectedBranch.bankingHours.days}</strong>
+                            <br />
+                            <span>{selectedBranch.bankingHours.hours}</span>
+                            </>
+                        ) : (
+                            <span>{selectedBranch.bankingHours}</span>
+                        )}
                     </div>
                 </div>
             )}

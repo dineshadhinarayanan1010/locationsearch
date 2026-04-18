@@ -15,8 +15,8 @@ export default function Search({locationSearch}) {
       const autocomplete = new window.google.maps.places.Autocomplete (
         inputRef.current,
         {
-          types: ["geocode"], // addresses only
-          componentRestrictions: { country: "ph" }, // optional
+          types: ["geocode"],
+          componentRestrictions: { country: "ph" },
         }
       );
 
