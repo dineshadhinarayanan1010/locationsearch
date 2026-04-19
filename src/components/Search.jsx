@@ -7,7 +7,10 @@ export default function Search({ locationSearch, loading }) {
   const [dispLoc, setDispLoc] = useState("");
   const searchLocation = (e) => {
     e.preventDefault();
-    locationSearch(location);
+    if(location.trim() === "")
+      return;
+    else
+      locationSearch(location);
   }
   const inputRef = useRef(null);
 

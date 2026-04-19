@@ -36,13 +36,18 @@ export default function App() {
   };
   return (
     <div className='app-container'>
-      <h3>Choose your branch of account</h3>
       <LoadScript googleMapsApiKey={GOOGLE_MAPS_CONFIG.apiKey} libraries={GOOGLE_MAPS_CONFIG.libraries}>
-        <Search locationSearch={searchLocation} loading={loading} />
-        <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-        {activeTab === "list" && <List branches={branches} selectedId={selectedBranchId} onSelect={handleSelectBranch} />}
-        {activeTab === "map" && <Map branches={branches} center={center} selectedId={selectedBranchId} onSelect={handleSelectBranch} />}
-        {/* {activeTab === "map" && <Mapbo branches={branches} center={center} selectedId={selectedBranchId} onSelect={handleSelectBranch} />} */}
+        <div className='app-header'>
+          <div className="app-heading">Account Information</div>
+          <div className="app-subtitle">Choose your branch of account</div>
+          <Search locationSearch={searchLocation} loading={loading} />
+          <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        </div>
+        <div className='app-content'>
+          {activeTab === "list" && <List branches={branches} selectedId={selectedBranchId} onSelect={handleSelectBranch} />}
+          {/* {activeTab === "map" && <Map branches={branches} center={center} selectedId={selectedBranchId} onSelect={handleSelectBranch} />} */}
+          {activeTab === "map" && <Mapbo branches={branches} center={center} selectedId={selectedBranchId} onSelect={handleSelectBranch} />}
+        </div>
       </LoadScript>
     </div>
   )

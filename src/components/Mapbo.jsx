@@ -12,7 +12,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
 
   const selectedBranch = branches.find((b) => b.id === selectedId);
 
-  // INIT MAP
   useEffect(() => {
     if (mapRef.current) return;
 
@@ -27,7 +26,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
     mapRef.current = map;
   }, []);
 
-  // 🔴 SEARCH LOCATION MARKER
   useEffect(() => {
     if (!mapRef.current || !center) return;
 
@@ -47,7 +45,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
     });
   }, [center]);
 
-  // 🔵 CLUSTER + MARKERS
   useEffect(() => {
     if (!mapRef.current || !branches.length) return;
 
@@ -58,7 +55,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
 
-      // remove old layers
       if (map.getSource("branches")) {
         if (map.getLayer("clusters")) map.removeLayer("clusters");
         if (map.getLayer("cluster-count")) map.removeLayer("cluster-count");
@@ -79,7 +75,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
         })),
       };
 
-      // SOURCE
       map.addSource("branches", {
         type: "geojson",
         data: geojson,
@@ -88,7 +83,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
         clusterRadius: 50,
       });
 
-      // 🔵 CLUSTERS
       map.addLayer({
         id: "clusters",
         type: "circle",
@@ -100,7 +94,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
         },
       });
 
-      // 🔢 COUNT
       map.addLayer({
         id: "cluster-count",
         type: "symbol",
@@ -115,7 +108,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
         },
       });
 
-      // 🔍 CLUSTER CLICK
       map.on("click", "clusters", (e) => {
         const features = map.queryRenderedFeatures(e.point, {
           layers: ["clusters"],
@@ -136,7 +128,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
         );
       });
 
-      // 🔵 ADD BLUE MARKERS FOR INDIVIDUAL POINTS
       branches.forEach((b) => {
         const el = document.createElement("div");
 
@@ -156,7 +147,6 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
       });
     };
 
-    // ✅ FIX: handle load properly
     if (map.isStyleLoaded()) {
       setupClusters();
     } else {
@@ -173,10 +163,9 @@ export default function Mapbo({ branches, center, selectedId, onSelect }) {
       <div
         ref={mapContainerRef}
         className="map-wrapper"
-        style={{ height: "500px", width: "100%" }}
+        style={{ width: "100%" }}
       />
 
-      {/* 📍 MAP CARD */}
       <div className="map-card-wrapper">
         {selectedBranch && (
           <div className="map-card">

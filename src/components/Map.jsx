@@ -4,14 +4,6 @@ import { MarkerClusterer } from "@googlemaps/markerclusterer";
 
 export default function Map({ branches, center, selectedId, onSelect }) {
 
-    // const selectedBranch = branches.find((b) => b.id === selectedId);
-
-    // useEffect(() => {
-    //     if (!selectedId) 
-    //         return;
-    //     document.getElementById(`branch-${selectedId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
-    // }, [selectedId]);
-
     const mapRef = useRef(null);
     const clustererRef = useRef(null);
 
@@ -24,12 +16,13 @@ export default function Map({ branches, center, selectedId, onSelect }) {
     useEffect(() => {
         if (!mapRef.current || !isLoaded) return;
 
-        // clear old clusters
         if (clustererRef.current) {
             clustererRef.current.clearMarkers();
+            clustererRef.current.setMap(null);
         }
 
         const markers = branches.map((branch) => {
+            const isSelected = branch.id === selectedId;
             const marker = new window.google.maps.Marker({
                 position: {
                     lat: Number(branch.lat),
@@ -37,9 +30,17 @@ export default function Map({ branches, center, selectedId, onSelect }) {
                 },
                 icon: {
                     url: "/blue-marker-icon.png",
-                    scaledSize: new window.google.maps.Size(30, 30),
-                },
+                    scaledSize: new window.google.maps.Size(
+                        isSelected ? 50 : 30,
+                        isSelected ? 50 : 30
+                    ),
+                }
             });
+            
+            
+            marker.setZIndex(isSelected ? 999 : undefined);
+            marker.setAnimation(
+                isSelected ? window.google.maps.Animation.BOUNCE : null);
 
             marker.addListener("click", () => onSelect(branch));
 
@@ -64,7 +65,33 @@ export default function Map({ branches, center, selectedId, onSelect }) {
                     }),
             },
         });
+
+        clustererRef.current.markers = markers;
+
     }, [branches, isLoaded]);
+
+    useEffect(() => {
+        const markers = clustererRef.current?.markers;
+        if (!markers) return;
+
+        markers.forEach((marker, index) => {
+            const branch = branches[index];
+            const isSelected = branch.id === selectedId;
+            marker.setIcon({
+                url: "/blue-marker-icon.png",
+                scaledSize: new window.google.maps.Size(
+                    isSelected ? 50 : 30,
+                    isSelected ? 50 : 30
+                ),
+            });
+
+            marker.setAnimation(
+                isSelected ? window.google.maps.Animation.BOUNCE : null
+            );
+
+            marker.setZIndex(isSelected ? 999 : undefined);
+        });
+    }, [selectedId, branches]);
 
     return (
         <div className="map-page">
@@ -72,7 +99,7 @@ export default function Map({ branches, center, selectedId, onSelect }) {
                 {branches.length} branches near your selected address
             </div>
             <div className="map-wrapper">
-                <GoogleMap mapContainerStyle={{ height: "500px", width: "100%" }} center={center?.lat && center?.lng ? center : { lat: 14.5995, lng: 120.9842 }} zoom={15} onLoad={(map) => (mapRef.current = map)}>
+                <GoogleMap mapContainerStyle={{ height: "100%", width: "100%" }} center={center?.lat && center?.lng ? center : { lat: 14.5995, lng: 120.9842 }} zoom={15} onLoad={(map) => {mapRef.current = map}}>
                     {center && (
                         <Marker
                             icon={"/red-marker-icon.png"}
