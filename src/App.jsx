@@ -45,8 +45,8 @@ export default function App() {
         </div>
         <div className='app-content'>
           {activeTab === "list" && <List branches={branches} selectedId={selectedBranchId} onSelect={handleSelectBranch} />}
-          {/* {activeTab === "map" && <Map branches={branches} center={center} selectedId={selectedBranchId} onSelect={handleSelectBranch} />} */}
-          {activeTab === "map" && <Mapbo branches={branches} center={center} selectedId={selectedBranchId} onSelect={handleSelectBranch} />}
+          {activeTab === "map" && <Map branches={branches} center={center} selectedId={selectedBranchId} onSelect={handleSelectBranch} />}
+          {/* {activeTab === "map" && <Mapbo branches={branches} center={center} selectedId={selectedBranchId} onSelect={handleSelectBranch} />} */}
         </div>
       </LoadScript>
     </div>
