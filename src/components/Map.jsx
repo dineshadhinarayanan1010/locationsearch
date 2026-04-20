@@ -1,4 +1,4 @@
-import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, Marker, InfoWindow, useJsApiLoader, DirectionsRenderer } from "@react-google-maps/api";
 import { useState, useEffect, useRef } from 'react';
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 
@@ -6,6 +6,7 @@ export default function Map({ branches, center, selectedId, onSelect }) {
 
     const mapRef = useRef(null);
     const clustererRef = useRef(null);
+    const [directions, setDirections] = useState(null);
 
     const selectedBranch = branches.find((b) => b.id === selectedId);
 
@@ -93,6 +94,39 @@ export default function Map({ branches, center, selectedId, onSelect }) {
         });
     }, [selectedId, branches]);
 
+    useEffect(() => {
+        if (!selectedBranch || !center || !isLoaded) {
+            setDirections(null);
+            return;
+        }
+
+        const directionsService = new window.google.maps.DirectionsService();
+
+        directionsService.route(
+            {
+                origin: center,
+                destination: {
+                    lat: Number(selectedBranch.lat),
+                    lng: Number(selectedBranch.lng),
+                },
+                travelMode: window.google.maps.TravelMode.DRIVING,
+            },
+            (result, status) => {
+                if (status === "OK") {
+                    setDirections(result);
+
+                    const bounds = new window.google.maps.LatLngBounds();
+                    result.routes[0].overview_path.forEach((p) =>
+                        bounds.extend(p)
+                    );
+                    mapRef.current.fitBounds(bounds);
+                } else {
+                    console.error("Directions request failed:", status);
+                }
+            }
+        );
+    }, [selectedBranch, center, isLoaded]);
+
     return (
         <div className="map-page">
             <div className="branch-count">
@@ -130,6 +164,14 @@ export default function Map({ branches, center, selectedId, onSelect }) {
                             onClick={() => onSelect(branch)}
                         />
                     ))} */}
+                    {directions && (
+                        <DirectionsRenderer
+                            directions={directions}
+                            options={{
+                                suppressMarkers: true, // keep custom markers
+                            }}
+                        />
+                    )}
                 </GoogleMap>
             </div>
             <div className="map-card-wrapper">
